@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>gaylab control plane</title>
+  <meta name="description" content="GayLab fleet control plane — private, gated at the edge." />
+  <meta name="theme-color" content="#0a0c10" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <!-- Assets are absolute so the hub stays themed whether it's served at
+       gaylab.me/dash/console/ (preview) or at the dash.gaylab.me root (real). -->
+  <link rel="icon" href="https://gaylab.me/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://gaylab.me/style.css" />
+</head>
+<body>
+  <a class="skip" href="#main">skip to content</a>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="https://gaylab.me/"><span class="prompt" aria-hidden="true">&gt;</span> gay<span class="grad">lab</span></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#surfaces">surfaces</a>
+      <a href="#fleet">fleet</a>
+      <a href="https://gaylab.me/">&larr; site</a>
+    </nav>
+  </header>
+
+  <main id="main" class="wrap">
+    <section class="term" aria-label="Control plane">
+      <div class="term-bar" aria-hidden="true">
+        <span class="dot d-r"></span><span class="dot d-y"></span><span class="dot d-g"></span>
+        <span class="term-title">calekett@gaylab: ~/control</span>
+      </div>
+      <div class="term-body">
+        <p class="line"><span class="pr">$</span> ./gaylab --control</p>
+        <h1 class="wordmark">gaylab<span class="grad">/</span>control</h1>
+        <p class="tag">The fleet at a glance. Every link opens a dashboard on the tailnet &mdash; connect to
+          Tailscale first. The dashboards these link to never touch the public internet.</p>
+        <div class="statgrid" id="stats"></div>
+        <p class="line boot" id="status-banner"><span class="pr">&gt;</span> <span id="boot-text">booting</span><span class="cursor" aria-hidden="true"></span></p>
+      </div>
+    </section>
+
+    <section id="surfaces" class="block">
+      <h2 class="head"><span class="pr">$</span>&nbsp;systemctl status<span class="rule" aria-hidden="true"></span></h2>
+      <p class="note">Admin surfaces. Each is gated &mdash; reachable only over Tailscale (<code>tag:gaylab</code>) or Cloudflare Access, never the public internet.</p>
+      <div class="rows" id="services"></div>
+    </section>
+
+    <section id="fleet" class="block">
+      <h2 class="head"><span class="pr">$</span>&nbsp;fleet ls --nodes<span class="rule" aria-hidden="true"></span></h2>
+      <p class="note">The hardware. Manage links drop you into each node&rsquo;s own admin UI.</p>
+      <div class="rows" id="nodes"></div>
+    </section>
+
+    <section class="block">
+      <h2 class="head"><span class="pr">#</span>&nbsp;connect<span class="rule" aria-hidden="true"></span></h2>
+      <p class="note">Not on the tailnet? Install Tailscale, join <code>tag:gaylab</code>, then set your MagicDNS
+        suffix in <code>dash.data.js</code> so these links resolve. Off-tailnet, they simply won&rsquo;t connect &mdash; by design.</p>
+    </section>
+  </main>
+
+  <footer class="statusline" aria-label="Status">
+    <span class="seg seg-accent">gaylab &middot; control</span>
+    <span class="seg" id="seg-nodes">&mdash;</span>
+    <span class="seg push" id="seg-updated">updated &mdash;</span>
+    <span class="seg seg-admin"><a href="https://gaylab.me/dash/">&larr; lock</a></span>
+  </footer>
+
+  <script src="dash.data.js"></script>
+  <script src="dash.app.js"></script>
+</body>
+</html>

@@ -66,11 +66,20 @@ stand up **Uptime Kuma** and either embed its public status page or publish a sm
 ```
 site/
 ├── index.html     structure
-├── style.css      the neon-pride theme
+├── style.css      the "lab console" terminal theme
 ├── app.js         renders data.js, copy-to-clipboard, pre-launch banner
 ├── data.js        ← you edit this
 ├── CNAME          gaylab.me
 ├── 404.html       branded not-found
 ├── favicon.svg    inline rainbow mark
-└── robots.txt
+├── robots.txt
+└── dash/          admin: login gate → dash.gaylab.me control plane (see dash/README.md)
+    ├── index.html   terminal login
+    ├── auth.js      PBKDF2 check + redirect  (soft gate — real auth is at dash.gaylab.me)
+    ├── setpass.html in-browser password generator
+    └── console/     the control-plane hub (deploy to dash.gaylab.me, gated)
 ```
+
+> **The `admin` link is a deterrent, not a lock.** A static site can't truly
+> authenticate anyone — the real gate for `dash.gaylab.me` is Cloudflare Access
+> or Tailscale. See `dash/README.md`.

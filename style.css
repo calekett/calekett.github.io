@@ -132,10 +132,40 @@ code { color: var(--accent); background: #121722; padding: .05em .35em; border-r
 /* 404 */
 .center-page { min-height: 78vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
+/* ── login / setpass form ── */
+.auth { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; max-width: 460px; }
+.auth.shake { animation: shake .34s ease; }
+@keyframes shake { 10%,90% { transform: translateX(-1px); } 30%,70% { transform: translateX(3px); } 50% { transform: translateX(-6px); } }
+.field { display: grid; grid-template-columns: 132px 1fr; align-items: center; gap: 12px; }
+.field .k { color: var(--dim); font-size: .9rem; text-align: right; }
+.field input {
+  font: inherit; color: var(--fg); background: #0b0e14; border: 1px solid var(--frame);
+  border-radius: 7px; padding: 10px 12px; width: 100%; caret-color: var(--accent);
+}
+.field input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(84,224,176,.16); }
+.authrow { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 4px; }
+.authstat { margin: 0; color: var(--dim); font-size: .9rem; }
+.authstat.err { color: var(--red); }
+.authstat.ok { color: var(--accent); }
+
+/* ── dash hub ── */
+.statgrid { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 4px; }
+.stat { border: 1px solid var(--line); border-radius: 9px; padding: 11px 16px; background: #0d1017; min-width: 118px; }
+.stat b { display: block; color: var(--fg); font-size: 1.4rem; font-weight: 800; line-height: 1.2; }
+.stat span { color: var(--dim); font-size: .76rem; letter-spacing: .3px; }
+.rows.wide .rdesc, .row.wide .rdesc { white-space: normal; }
+.rname .role { color: var(--dim); font-weight: 400; font-size: .82rem; margin-left: 6px; }
+.launch { font-weight: 700; white-space: nowrap; }
+.launch.off { color: var(--dim); cursor: not-allowed; }
+.launch.off:hover { text-decoration: none; }
+
 @media (max-width: 560px) {
   .nav { display: none; }
   .row, .mc-world { grid-template-columns: 16px 1fr; }
   .rright { grid-column: 1 / -1; padding-left: 28px; justify-content: flex-start; }
+  .field { grid-template-columns: 1fr; gap: 5px; }
+  .field .k { text-align: left; }
+  .stat { flex: 1; min-width: 44%; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; scroll-behavior: auto !important; transition: none !important; }

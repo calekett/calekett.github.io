@@ -3,10 +3,11 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>gaylab control</title>
-  <meta name="description" content="GayLab fleet control — private console, gated behind Tailscale." />
+  <title>gaylab — control plane login</title>
+  <meta name="description" content="GayLab control plane — authorized access only." />
   <meta name="theme-color" content="#0a0c10" />
-  <meta name="robots" content="noindex" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
   <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="../style.css" />
 </head>
@@ -20,46 +21,54 @@
   </header>
 
   <main id="main" class="wrap">
-    <section class="term" aria-label="Control">
+    <section class="term" aria-label="Login">
       <div class="term-bar" aria-hidden="true">
         <span class="dot d-r"></span><span class="dot d-y"></span><span class="dot d-g"></span>
-        <span class="term-title">calekett@gaylab: ~/control</span>
+        <span class="term-title">calekett@gaylab: ~/auth</span>
       </div>
       <div class="term-body">
-        <p class="line"><span class="pr">$</span> ssh gaylab-control</p>
-        <h1 class="wordmark">gaylab<span class="grad">/</span>control</h1>
-        <p class="tag">Private fleet console. The live dashboards run on the tailnet &mdash; connect to Tailscale, then open the console below. Nothing here is exposed to the public internet.</p>
-        <p class="line boot warn"><span class="pr">&gt;</span> control plane bootstrapping &mdash; nodes come online soon<span class="cursor" aria-hidden="true"></span></p>
+        <p class="line"><span class="pr">$</span> ssh dash.gaylab.me</p>
+        <h1 class="wordmark">gaylab<span class="grad">/</span>login</h1>
+        <p class="tag">Control plane &mdash; authorized access only. Authenticate to route through to <code>dash.gaylab.me</code>.</p>
+
+        <!-- method=post + onsubmit=return false: fail-safe so a plaintext password can never
+             land in the URL/history if auth.js ever fails to attach its submit handler. -->
+        <form class="auth" id="auth-form" method="post" autocomplete="off" novalidate onsubmit="return false">
+          <div class="field">
+            <label class="k" for="u">login:</label>
+            <input id="u" name="u" type="text" inputmode="text"
+                   autocomplete="username" autocapitalize="off" autocorrect="off"
+                   spellcheck="false" required aria-describedby="auth-stat" />
+          </div>
+          <div class="field">
+            <label class="k" for="p">password:</label>
+            <input id="p" name="p" type="password"
+                   autocomplete="current-password" required aria-describedby="auth-stat" />
+          </div>
+          <div class="authrow">
+            <button class="btn" type="submit" id="auth-go">authenticate &rarr;</button>
+            <p class="authstat" id="auth-stat" role="status" aria-live="polite">
+              <span class="pr">&gt;</span> awaiting credentials<span class="cursor" aria-hidden="true"></span>
+            </p>
+          </div>
+        </form>
       </div>
     </section>
 
     <section class="block">
-      <h2 class="head"><span class="pr">$</span>&nbsp;systemctl status<span class="rule" aria-hidden="true"></span></h2>
-      <p class="note">Every admin surface is gated: reachable only over Tailscale (<code>tag:gaylab</code>), never the public internet.</p>
-      <div class="rows">
-        <div class="row"><span class="glyph g-planned" aria-hidden="true">○</span><div class="rc"><span class="rname">fleet health</span><span class="rdesc">one-pane node status board (fleet-ui)</span></div><div class="rright"><span class="pill g-planned">tailscale</span></div></div>
-        <div class="row"><span class="glyph g-planned" aria-hidden="true">○</span><div class="rc"><span class="rname">metrics</span><span class="rdesc">Prometheus + Grafana history &amp; alerts</span></div><div class="rright"><span class="pill g-planned">tailscale</span></div></div>
-        <div class="row"><span class="glyph g-planned" aria-hidden="true">○</span><div class="rc"><span class="rname">game panel</span><span class="rdesc">Pterodactyl — servers, users, consoles</span></div><div class="rright"><span class="pill g-planned">tailscale</span></div></div>
-        <div class="row"><span class="glyph g-planned" aria-hidden="true">○</span><div class="rc"><span class="rname">media</span><span class="rdesc">library &amp; transcode admin</span></div><div class="rright"><span class="pill g-planned">tailscale</span></div></div>
-      </div>
-    </section>
-
-    <section class="block">
-      <h2 class="head"><span class="pr">#</span>&nbsp;connect<span class="rule" aria-hidden="true"></span></h2>
-      <div class="startgrid">
-        <p class="note">On the tailnet already? Open the console. Otherwise install Tailscale and join <code>tag:gaylab</code> first.</p>
-        <!-- EDIT: point this at the real dashboard once the fleet is up — your Tailscale
-             MagicDNS name for the monitoring host, e.g. http://monitoring.tailXXXX.ts.net:8088
-             (the fleet-ui). Keep it OFF the public internet. -->
-        <a class="btn" id="console-link" href="#">open fleet console &rarr;</a>
-      </div>
+      <h2 class="head"><span class="pr">#</span>&nbsp;notice<span class="rule" aria-hidden="true"></span></h2>
+      <p class="note">This gate is a courtesy check. The real dashboards live on <code>dash.gaylab.me</code>,
+        which is gated at the network edge (Tailscale / Cloudflare Access) &mdash; nothing sensitive is
+        exposed to the public internet. If you don&rsquo;t have access, this page is as far as you go.</p>
     </section>
   </main>
 
   <footer class="statusline" aria-label="Status">
-    <span class="seg seg-accent">gaylab &middot; control</span>
-    <span class="seg">gated &middot; tailscale-only</span>
-    <span class="seg push">status: booting</span>
+    <span class="seg seg-accent">gaylab &middot; auth</span>
+    <span class="seg">gated &middot; authorized-only</span>
+    <span class="seg push">status: locked</span>
   </footer>
+
+  <script src="auth.js"></script>
 </body>
 </html>

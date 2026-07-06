@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>gaylab — set login password</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <div class="scanlines" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="/"><span class="prompt" aria-hidden="true">&gt;</span> gay<span class="grad">lab</span></a>
+    <nav class="nav" aria-label="Primary"><a href="./">&larr; login</a></nav>
+  </header>
+
+  <main class="wrap">
+    <section class="term" aria-label="Set password">
+      <div class="term-bar" aria-hidden="true">
+        <span class="dot d-r"></span><span class="dot d-y"></span><span class="dot d-g"></span>
+        <span class="term-title">calekett@gaylab: ~/auth/setpass</span>
+      </div>
+      <div class="term-body">
+        <p class="line"><span class="pr">$</span> ./setpass --generate</p>
+        <h1 class="wordmark" style="font-size:clamp(2rem,8vw,3.4rem)">set<span class="grad">·</span>password</h1>
+        <p class="tag">Generates the PBKDF2 block for <code>auth.js</code>. Runs 100% in this browser tab &mdash;
+          the password is never uploaded, logged, or committed. Paste the output over <code>CONFIG</code> in
+          <code>dash/auth.js</code>.</p>
+
+        <form class="auth" id="gen-form" autocomplete="off" novalidate>
+          <div class="field">
+            <label class="k" for="user">login:</label>
+            <input id="user" type="text" value="admin" autocapitalize="off" autocorrect="off" spellcheck="false" />
+          </div>
+          <div class="field">
+            <label class="k" for="pw">new&nbsp;password:</label>
+            <input id="pw" type="text" placeholder="pick something long" autocapitalize="off" autocorrect="off" spellcheck="false" />
+          </div>
+          <div class="authrow">
+            <button class="btn" type="submit">generate &rarr;</button>
+            <p class="authstat" id="gen-stat"><span class="pr">&gt;</span> waiting_</p>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <section class="block" id="out-wrap" hidden>
+      <h2 class="head"><span class="pr">$</span>&nbsp;paste into dash/auth.js<span class="rule" aria-hidden="true"></span></h2>
+      <p class="note">Replace the <code>CONFIG</code> object in <code>dash/auth.js</code> with this, then commit &amp; push.</p>
+      <div class="tree"><code id="out" style="display:block;white-space:pre;background:none;padding:0;color:var(--fg)"></code></div>
+      <div class="startgrid" style="margin-top:14px">
+        <p class="note" style="margin:0">Copy it, drop it in, done.</p>
+        <button class="btn" type="button" id="copy">copy block &rarr;</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script>
+  (function () {
+    "use strict";
+    var ITER = 210000;
+    var form = document.getElementById("gen-form");
+    var stat = document.getElementById("gen-stat");
+    var outWrap = document.getElementById("out-wrap");
+    var out = document.getElementById("out");
+    var lastBlock = "";
+
+    function say(m) { stat.innerHTML = '<span class="pr">&gt;</span> ' + m; }
+    function hex(buf) {
+      var b = new Uint8Array(buf), s = "";
+      for (var i = 0; i < b.length; i++) s += b[i].toString(16).padStart(2, "0");
+      return s;
+    }
+    function toast(msg) {
+      var t = document.getElementById("toast");
+      if (!t) return;
+      t.textContent = msg; t.classList.add("show");
+      setTimeout(function () { t.classList.remove("show"); }, 1600);
+    }
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var user = (document.getElementById("user").value || "admin").trim();
+      var pw = document.getElementById("pw").value || "";
+      if (pw.length < 4) { say("password too short"); return; }
+      var subtle = window.crypto && window.crypto.subtle;
+      if (!subtle) { say("crypto unavailable — open over https or file://"); return; }
+      say("deriving&hellip;");
+      var salt = window.crypto.getRandomValues(new Uint8Array(16));
+      var enc = new TextEncoder();
+      subtle.importKey("raw", enc.encode(pw), { name: "PBKDF2" }, false, ["deriveBits"])
+        .then(function (key) {
+          return subtle.deriveBits({ name: "PBKDF2", salt: salt, iterations: ITER, hash: "SHA-256" }, key, 256);
+        })
+        .then(function (bits) {
+          var block =
+            'var CONFIG = {\n' +
+            '  redirect: "https://dash.gaylab.me/",\n' +
+            '  username: ' + JSON.stringify(user) + ',\n' +
+            '  iterations: ' + ITER + ',\n' +
+            '  salt: "' + hex(salt.buffer) + '",\n' +
+            '  hash: "' + hex(bits) + '"\n' +
+            '};';
+          lastBlock = block;
+          out.textContent = block;
+          outWrap.hidden = false;
+          say("done — block ready below");
+        })
+        .catch(function () { say("failed — try again"); });
+    });
+
+    document.getElementById("copy").addEventListener("click", function () {
+      if (!lastBlock) return;
+      (navigator.clipboard && navigator.clipboard.writeText
+        ? navigator.clipboard.writeText(lastBlock)
+        : Promise.reject()
+      ).then(function () { toast("copied config block"); }, function () {
+        var r = document.createRange(); r.selectNodeContents(out);
+        var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        try { document.execCommand("copy"); toast("copied config block"); } catch (x) {}
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
