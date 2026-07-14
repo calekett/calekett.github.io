@@ -44,7 +44,7 @@
       boot.textContent = "still booting — servers come online soon";
       if (bootLine) bootLine.classList.add("warn");
     } else {
-      boot.textContent = "systems nominal — grab a server below";
+      boot.textContent = "servers online heck yeah baby woo";
     }
   }
 
