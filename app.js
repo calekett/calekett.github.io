@@ -140,4 +140,49 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function () { t.classList.remove("show"); }, 1700);
   }
+
+  // ── live status ────────────────────────────────────────────────────────────
+  // Probe the Minecraft network (Velocity) via a public status API and reflect
+  // the real up/down state on the page. No backend needed — runs in the browser.
+  // Terraria/other games can't be pinged from a browser, so those keep their
+  // hand-set data.js status (an honest "as of <updated>").
+  (function probeMinecraft() {
+    if (!D.minecraft || !D.minecraft.address) return;
+    var url = "https://api.mcstatus.io/v2/status/java/" + encodeURIComponent(D.minecraft.address);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (s) {
+        if (!s) return;
+        var up = !!s.online;
+        var pl = (s.players && typeof s.players.online === "number") ? s.players.online : 0;
+        var max = (s.players && s.players.max) ? s.players.max : "";
+
+        // intro boot line
+        if (boot) {
+          boot.textContent = up
+            ? "systems nominal — " + pl + " player" + (pl === 1 ? "" : "s") + " online"
+            : "minecraft network offline — check back soon";
+          if (bootLine) bootLine.classList.toggle("warn", !up);
+        }
+
+        // live pill next to the minecraft address
+        var mcTop = document.querySelector("#minecraft .mc-top");
+        if (mcTop && !mcTop.querySelector(".live-pill")) {
+          var b = document.createElement("span");
+          b.className = "pill live-pill " + (up ? "g-online" : "g-offline");
+          b.textContent = up ? "online" + (max ? " · " + pl + "/" + max : "") : "offline";
+          mcTop.appendChild(b);
+        }
+
+        // if the whole network is down, every world is effectively down
+        if (!up) {
+          document.querySelectorAll("#minecraft .mc-world").forEach(function (w) {
+            var g = w.querySelector(".glyph"), p = w.querySelector(".pill");
+            if (g) g.className = "glyph g-offline";
+            if (p) { p.className = "pill g-offline"; p.textContent = "offline"; }
+          });
+        }
+      })
+      .catch(function () { /* network/API hiccup — keep the hand-set status */ });
+  })();
 })();
