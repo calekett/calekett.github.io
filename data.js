@@ -5,9 +5,12 @@
  *
  * status values:  "online" | "offline" | "maintenance" | "planned"
  * Bump `updated` whenever you flip a status so the page shows an honest date.
+ * NOTE: the Minecraft network status is ALSO probed live on page load (see
+ * app.js) via a public status API — that live result overrides the hand-set
+ * value below, so players always see the real up/down state.
  */
 window.GAYLAB_DATA = {
-  updated: "2026-07-05",
+  updated: "2026-07-14",
 
   // Optional. Leave "" to hide the button/link.
   discord: "",                          // e.g. "https://discord.gg/xxxxxxx"
@@ -16,18 +19,19 @@ window.GAYLAB_DATA = {
   // ── Minecraft: one address, many worlds (Velocity routes players) ──────────
   minecraft: {
     address: "gaylab.me",               // players just type this (SRV record -> :25565)
-    version: "1.21.x",
+    version: "26.2",
     worlds: [
-      { name: "modded",    desc: "Forge / Fabric kitchen-sink pack", status: "planned" },
-      { name: "survival",  desc: "vanilla+ Paper survival",          status: "planned" },
-      { name: "minigames", desc: "parkour, bed wars, party games",   status: "planned" }
+      { name: "survival",  desc: "vanilla+ Paper survival — the main world", status: "online" },
+      { name: "creative",  desc: "creative building, flight enabled",        status: "online" },
+      { name: "vanilla",   desc: "pure-vanilla survival, no frills",         status: "online" },
+      { name: "minigames", desc: "parkour & party games (building out)",     status: "online" }
     ]
   },
 
   // ── Other game servers (each its own address:port) ─────────────────────────
   games: [
-    { name: "terraria", address: "terraria.gaylab.me", port: 7777, desc: "tModLoader / tShock",       status: "planned" },
-    { name: "valheim",  address: "valheim.gaylab.me",  port: 2456, desc: "dedicated viking survival", status: "planned" }
+    { name: "terraria", address: "terraria.gaylab.me", port: 7777, desc: "TShock 6.1 · Terraria 1.4.5", status: "maintenance" },
+    { name: "valheim",  address: "valheim.gaylab.me",  port: 2456, desc: "dedicated viking survival",    status: "planned" }
   ],
 
   // ── "tree ./gaylab" — public-safe blurbs. No IPs / hostnames here. ──────────
