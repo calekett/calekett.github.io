@@ -30,8 +30,9 @@ window.GAYLAB_DATA = {
 
   // ── Other game servers (each its own address:port) ─────────────────────────
   games: [
-    { name: "terraria", address: "terraria.gaylab.me", port: 7777, desc: "TShock 6.1 · Terraria 1.4.5", status: "online" },
-    { name: "valheim",  address: "valheim.gaylab.me",  port: 2456, desc: "dedicated viking survival",    status: "planned" }
+    { name: "terraria",   address: "terraria.gaylab.me",   port: 7777, desc: "TShock 6.1 · Terraria 1.4.5",   status: "online" },
+    { name: "tmodloader", address: "tmodloader.gaylab.me", port: 7778, desc: "modded terraria · coming soon", status: "planned" },
+    { name: "valheim",    address: "valheim.gaylab.me",    port: 2456, desc: "dedicated viking survival",     status: "planned" }
   ],
 
   // ── "tree ./gaylab" — public-safe blurbs. No IPs / hostnames here. ──────────

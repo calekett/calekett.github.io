@@ -25,9 +25,11 @@
   function rc(name, desc) {
     return '<div class="rc"><span class="rname">' + esc(name) + '</span><span class="rdesc">' + esc(desc || "") + "</span></div>";
   }
-  function row(name, desc, status, address) {
+  function row(name, desc, status, address, port) {
     return '<div class="row">' + glyph(status) + rc(name, desc) +
-      '<div class="rright">' + pill(status) + (address ? addrChip(address) : "") + "</div></div>";
+      '<div class="rright">' + pill(status) +
+      (address ? addrChip(address) : "") +
+      (port ? addrChip(String(port)) : "") + "</div></div>";
   }
   function allPlanned() {
     var items = [];
@@ -66,7 +68,7 @@
   var games = document.getElementById("games");
   if (games && D.games) {
     games.innerHTML = D.games.map(function (g) {
-      return row(g.name, g.desc, g.status, g.address + (g.port ? ":" + g.port : ""));
+      return row(g.name, g.desc, g.status, g.address, g.port);
     }).join("");
   }
 
